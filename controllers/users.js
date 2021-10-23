@@ -31,8 +31,16 @@ exports.userSignin = (req, res, next) => {
       if (err) {
         res.send(err);
       }
-      const token = jwt.sign(user.toJSON(), keys.cookieKey);
-      res.json({ user: req.user, token: token });
+      const token = jwt.sign(user.toJSON(), keys.cookieKey, {
+        expiresIn: "1d",
+      });
+      const verifyToken = jwt.verify(token, keys.cookieKey);
+      const { exp } = verifyToken;
+      const crrentUser = {
+        email: req.user.email,
+        role: req.user.role,
+      };
+      res.status(200).json({ user: crrentUser, token: token, expiresIn: exp });
     });
   })(req, res);
 };

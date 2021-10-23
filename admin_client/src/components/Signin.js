@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import AuthContext from "../store/auth-context";
 
 import axios from "axios";
 
 const Signin = () => {
+  const authContext = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const signInHandler = (e) => {
@@ -13,7 +15,9 @@ const Signin = () => {
         password: password,
       })
       .then(({ data }) => {
-        console.log(data);
+        const { user, token, expiresIn } = data;
+        const expirationTime = new Date(+expiresIn * 1000);
+        authContext.login(user, token, expirationTime.toISOString());
       })
       .catch((ex) => {
         console.log("ex>>>>", ex);
