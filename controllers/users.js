@@ -23,8 +23,7 @@ exports.userSignin = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err || !user) {
       return res.status(400).json({
-        error: info.message,
-        user: user,
+        errors: [info.message],
       });
     }
     req.login(user, (err) => {

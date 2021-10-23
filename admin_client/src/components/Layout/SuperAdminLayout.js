@@ -1,13 +1,12 @@
 import { Fragment } from "react";
-import Header from "./Header/Header";
 
-const Layout = (props) => {
+const SuperAdminLayout = (props) => {
   return (
     <Fragment>
-      <Header />
+      SuperAdmin
       <main>{props.children}</main>
     </Fragment>
   );
 };
 
-export default Layout;
+export default SuperAdminLayout;
