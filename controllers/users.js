@@ -45,7 +45,7 @@ exports.userSignin = (req, res, next) => {
 };
 
 exports.userSignup = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
   const user = await User.findOne({ email: email });
   if (user) {
     res.status(409).json({
@@ -53,20 +53,28 @@ exports.userSignup = async (req, res, next) => {
     });
   }
 
-  const passwordHash = bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
+  const passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
   if (passwordHash) {
-    const newUser = await new User({ email, password: passwordHash }).save();
-    if (newUser) {
-      const token = jwt.sign(
-        {
-          user: { id: newUser.id },
-        },
-        keys.cookieKey,
-        {
-          expiresIn: "1d",
-        }
-      );
-      res.status(200).json({ user: user, token: token });
+    try {
+      const newUser = await new User({
+        email,
+        password: passwordHash,
+        role,
+      }).save();
+      if (newUser) {
+        const token = jwt.sign(
+          {
+            user: { id: newUser.id },
+          },
+          keys.cookieKey,
+          {
+            expiresIn: "1d",
+          }
+        );
+        res.status(200).json({ user: user, token: token });
+      }
+    } catch (ex) {
+      res.status(400).json({ errors: [ex._message] });
     }
   }
 };

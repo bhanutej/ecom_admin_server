@@ -3,7 +3,7 @@ import axios from "axios";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
-import AuthContext from "../../store/auth-context";
+import AuthContext from "../../store/Auth/auth-context";
 import classes from "./Signin.module.css";
 import { notifyMessage } from "../../utilities/NotifyMessages";
 

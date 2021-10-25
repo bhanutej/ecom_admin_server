@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 import "./index.css";
 import App from "./components/App";
-import { AuthContextProvider } from "./store/auth-context";
+import { AuthContextProvider } from "./store/Auth/auth-context";
 
 ReactDOM.render(
   <AuthContextProvider>
