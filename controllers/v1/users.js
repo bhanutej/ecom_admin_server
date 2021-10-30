@@ -4,7 +4,7 @@ const User = mongoose.model("users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-const keys = require("../config/keys");
+const keys = require("../../config/keys");
 const _ = require("lodash");
 
 const PASSWORD_SALT_ROUNDS = 10;
@@ -36,6 +36,7 @@ exports.userSignin = (req, res, next) => {
       const verifyToken = jwt.verify(token, keys.cookieKey);
       const { exp } = verifyToken;
       const crrentUser = {
+        id: req.user.id.toString(),
         email: req.user.email,
         role: req.user.role,
       };

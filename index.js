@@ -6,9 +6,12 @@ const bodyParser = require("body-parser");
 
 const keys = require("./config/keys");
 require("./models/User");
+require("./models/Address");
+require("./models/Organization");
 require("./services/passport");
 require("./services/jwt");
-const authRoutes = require("./routes/authRoutes");
+const authRoutes = require("./routes/v1/authRoutes");
+const organizationRoutes = require("./routes/v1/organizationRoutes");
 
 global.__basedir = __dirname;
 
@@ -29,5 +32,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 authRoutes(app);
+organizationRoutes(app);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);

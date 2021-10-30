@@ -1,7 +1,7 @@
 const passport = require("passport");
-const usersController = require("../controllers/users");
+const usersController = require("../../controllers/v1/users");
 const multer = require("multer");
-const authCheck = require("../middlewares/authCheck");
+const authCheck = require("../../middlewares/authCheck");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads/");

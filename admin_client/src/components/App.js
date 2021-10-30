@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import "antd/dist/antd.css";
 
 import AuthContext from "../store/Auth/auth-context";
@@ -21,7 +21,16 @@ const App = () => {
             <Users />
           </Layout>
         ) : (
-          <SuperAdminLayout></SuperAdminLayout>
+          <SuperAdminLayout>
+            <Switch>
+              <Route exact path="/">
+                <Users />
+              </Route>
+              <Route exact path="/admins">
+                <Users />
+              </Route>
+            </Switch>
+          </SuperAdminLayout>
         )}
       </BrowserRouter>
     </div>

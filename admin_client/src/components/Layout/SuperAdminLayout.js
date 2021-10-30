@@ -11,7 +11,6 @@ const SuperAdminLayout = (props) => {
         <Header />
         <LeftMenu />
       </LeftmenuContextProvider>
-      SuperAdmin
       <main>{props.children}</main>
     </Fragment>
   );
