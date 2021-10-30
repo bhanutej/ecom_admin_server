@@ -3,6 +3,8 @@ module.exports = (exception) => {
   if (exception.code === 11000) {
     const uniqeKey = Object.keys(exception.keyValue)[0];
     errors.push(`${uniqeKey} is already existed`);
+  } else if (exception.name === "CastError") {
+    errors.push(`Data not found`);
   } else {
     const exceptionMessage = exception.message;
     const allErrors = exceptionMessage

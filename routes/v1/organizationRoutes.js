@@ -16,4 +16,11 @@ module.exports = (app) => {
     superAdminAuthCheck,
     organizationController.organizations
   );
+
+  app.get(
+    "/api/v1/organization/",
+    authCheck,
+    superAdminAuthCheck,
+    organizationController.organization
+  );
 };
