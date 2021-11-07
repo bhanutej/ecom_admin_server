@@ -7,6 +7,7 @@ import Users from "./Users";
 import Signin from "./Authentication/Signin";
 import Layout from "./Layout/Layout";
 import SuperAdminLayout from "./Layout/SuperAdminLayout";
+import Organizations from "./Organizations/Organizations";
 
 const App = () => {
   const authContext = useContext(AuthContext);
@@ -28,6 +29,9 @@ const App = () => {
               </Route>
               <Route exact path="/admins">
                 <Users />
+              </Route>
+              <Route exact path="/organizations">
+                <Organizations />
               </Route>
             </Switch>
           </SuperAdminLayout>

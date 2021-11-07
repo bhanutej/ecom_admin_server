@@ -15,6 +15,28 @@ const calculateRemainingTime = (expireTime) => {
   return remainingDuration;
 };
 
+const jwtParse = (token) => {
+  const userObjtoken = token.split(".")[1];
+  const finalToken = userObjtoken.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(finalToken)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+};
+
+const tokenRemainingTime = (token) => {
+  const userObject = jwtParse(token);
+  const expireTime = new Date(+userObject.exp * 1000).toISOString();
+  const remainingDuration = calculateRemainingTime(expireTime);
+  return remainingDuration;
+};
+
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
   const initialCurrentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -28,6 +50,13 @@ export const AuthContextProvider = (props) => {
     localStorage.removeItem("token");
     localStorage.removeItem("currentUser");
   };
+
+  if (initialToken) {
+    const tokenRemainingDuration = tokenRemainingTime(initialToken);
+    if (tokenRemainingDuration && tokenRemainingDuration < 0) {
+      logoutHandler();
+    }
+  }
 
   const loginHandler = (user, token, expiresIn) => {
     setCurrentUser(user);

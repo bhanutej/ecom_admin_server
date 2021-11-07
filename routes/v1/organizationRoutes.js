@@ -23,4 +23,11 @@ module.exports = (app) => {
     superAdminAuthCheck,
     organizationController.organization
   );
+
+  app.put(
+    "/api/v1/organization/:organization_id",
+    authCheck,
+    superAdminAuthCheck,
+    organizationController.update
+  );
 };
