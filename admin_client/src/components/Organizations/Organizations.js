@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import axios from "axios";
 
 import OrganizationForm from "./OrganizationForm";
 import OrganizationList from "./OrganizationList";
