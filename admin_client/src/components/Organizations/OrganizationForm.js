@@ -1,64 +1,64 @@
 import { Drawer, Form, Input, Button, Select } from "antd";
-import axios from "axios";
 
 import { notifyMessage } from "../../utilities/NotifyMessages";
+import { createOrganization, updateOrganization } from "./Api/organizationApis";
 
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-};
 const { Option } = Select;
 
 const OrganizationForm = ({
   visibleForm,
   closeForm,
   organization,
-  fetchOrganizations,
+  getOrganizations,
 }) => {
   const [form] = Form.useForm();
+  let drawerText = "Create a new Organization";
+  const onReset = () => {
+    form.resetFields();
+    closeForm();
+  };
 
   if (organization) {
+    drawerText = "Update a new Organization";
     form.setFieldsValue({ ...organization });
+  } else {
+    form.resetFields();
   }
 
-  const onFinish = (formObject) => {
+  const onFinish = async (formObject) => {
     if (organization) {
-      axios
-        .put(`/api/v1/organization/${organization.id}`, { ...formObject })
-        .then(({ data }) => {
-          const { success } = data;
-          if (success) {
-            console.log(data);
-            notifyMessage("success", "Orgainization updated!");
-            closeForm();
-            fetchOrganizations();
-          }
-        })
-        .catch((exception) => {
-          const { data } = exception.response;
-          const { errors } = data;
-          if (errors && errors.length > 0) {
-            notifyMessage("error", errors[0]);
-          }
-        });
+      try {
+        const { data } = await updateOrganization(organization.id, formObject);
+        const { success } = data;
+        if (success) {
+          console.log(data);
+          notifyMessage("success", "Orgainization updated!");
+          closeForm();
+          getOrganizations();
+        }
+      } catch (exception) {
+        const { data } = exception.response;
+        const { errors } = data;
+        if (errors && errors.length > 0) {
+          notifyMessage("error", errors[0]);
+        }
+      }
     } else {
-      axios
-        .post("/api/v1/organizations/create", { ...formObject })
-        .then(({ data }) => {
-          const { success } = data;
-          if (success) {
-            console.log(data);
-            notifyMessage("success", "Orgainization saved!");
-            closeForm();
-          }
-        })
-        .catch((exception) => {
-          const { data } = exception.response;
-          const { errors } = data;
-          if (errors && errors.length > 0) {
-            notifyMessage("error", errors[0]);
-          }
-        });
+      try {
+        const { data } = await createOrganization(formObject);
+        const { success } = data;
+        if (success) {
+          console.log(data);
+          notifyMessage("success", "Orgainization saved!");
+          closeForm();
+        }
+      } catch (exception) {
+        const { data } = exception.response;
+        const { errors } = data;
+        if (errors && errors.length > 0) {
+          notifyMessage("error", errors[0]);
+        }
+      }
     }
   };
 
@@ -73,13 +73,13 @@ const OrganizationForm = ({
   return (
     <div>
       <Drawer
-        title="Create a new Organization"
-        width={720}
+        title={drawerText}
+        width={520}
         onClose={closeForm}
         visible={visibleForm}
-        bodyStyle={{ paddingBottom: 80 }}
+        bodyStyle={{ paddingBottom: 30 }}
       >
-        <Form {...layout} form={form} onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item name={["name"]} label="Name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -151,9 +151,12 @@ const OrganizationForm = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+          <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
+            </Button>
+            <Button htmlType="button" onClick={onReset}>
+              Cancel
             </Button>
           </Form.Item>
         </Form>

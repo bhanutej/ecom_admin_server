@@ -5,7 +5,7 @@ const OrganizationList = ({
   pagination,
   handleTableChange,
   tableDataLoading,
-  fetchOrganization,
+  getOrganization,
 }) => {
   const columns = [
     {
@@ -33,7 +33,7 @@ const OrganizationList = ({
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <span onClick={() => fetchOrganization(record._id)}>Edit</span>
+          <span onClick={() => getOrganization(record._id)}>Edit</span>
           <span>Delete</span>
         </Space>
       ),

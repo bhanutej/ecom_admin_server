@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -6,10 +6,11 @@ import axios from "axios";
 import OrganizationForm from "./OrganizationForm";
 import OrganizationList from "./OrganizationList";
 import classes from "./Organizations.module.css";
+import { fetchOrganizations, fetchOrganization } from "./Api/organizationApis";
 
 const Organizations = () => {
   const initialPagination = {
-    cuurent: 1,
+    current: 1,
     pageSize: 5,
     total: 5,
   };
@@ -24,58 +25,47 @@ const Organizations = () => {
   };
   const onClose = () => {
     setVisibleForm(false);
+    setOrganization(null);
   };
+
+  const _getOrganizations = useCallback(async () => {
+    setTableDataLoading(true);
+    const { data } = await fetchOrganizations(initialPagination);
+    const { success, organizations, pagination } = data;
+    if (success) {
+      setOrganizations(organizations);
+      setPagination({ ...pagination });
+      setTableDataLoading(false);
+    }
+  }, [pagination]);
 
   useEffect(() => {
-    setTableDataLoading(true);
-    axios.get(`/api/v1/organizations`).then(({ data }) => {
-      const { success, organizations, pagination } = data;
-      if (success) {
-        setOrganizations(organizations);
-        setPagination({ ...pagination });
-        setTableDataLoading(false);
-      }
-    });
+    _getOrganizations();
   }, []);
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = async (paginationObj, filters, sorter) => {
     setTableDataLoading(true);
-    axios
-      .get(`/api/v1/organizations?page=${pagination.current}`)
-      .then(({ data }) => {
-        const { success, organizations, pagination } = data;
-        if (success) {
-          setOrganizations(organizations);
-          setPagination({ ...pagination });
-          setTableDataLoading(false);
-        }
-      });
+    const { data } = await fetchOrganizations(paginationObj);
+    const { success, organizations, pagination } = data;
+    if (success) {
+      setOrganizations(organizations);
+      setPagination({ ...pagination });
+      setTableDataLoading(false);
+    }
   };
 
-  const fetchOrganizations = () => {
+  const getOrganizations = () => {
     setTableDataLoading(true);
-    axios
-      .get(`/api/v1/organizations?page=${pagination.current}`)
-      .then(({ data }) => {
-        const { success, organizations, pagination } = data;
-        if (success) {
-          setOrganizations(organizations);
-          setPagination({ ...pagination });
-          setTableDataLoading(false);
-        }
-      });
+    _getOrganizations();
   };
 
-  const fetchOrganization = (organization_id) => {
-    axios
-      .get(`/api/v1/organization/?organization_id=${organization_id}`)
-      .then(({ data }) => {
-        const { success, organization } = data;
-        if (success) {
-          setOrganization({ ...organization });
-          showDrawer();
-        }
-      });
+  const getOrganization = async (organization_id) => {
+    const { data } = await fetchOrganization(organization_id);
+    const { success, organization } = data;
+    if (success) {
+      setOrganization({ ...organization });
+      showDrawer();
+    }
   };
 
   return (
@@ -90,13 +80,13 @@ const Organizations = () => {
         pagination={pagination}
         handleTableChange={handleTableChange}
         tableDataLoading={tableDataLoading}
-        fetchOrganization={fetchOrganization}
+        getOrganization={getOrganization}
       />
       <OrganizationForm
         visibleForm={visibleForm}
         closeForm={onClose}
         organization={organization}
-        fetchOrganizations={fetchOrganizations}
+        getOrganizations={getOrganizations}
       />
     </div>
   );
